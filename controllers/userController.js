@@ -2,13 +2,11 @@
 const { User, Thought } = require('../models');
 
 module.exports = {
-  // Get all users
   getUsers(req, res) {
     User.find()
       .then((users) => res.json(users))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json({ error: 'Failed to get users', details: err.message }));
   },
-  // Get a single user by ID
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
       .populate('thoughts')
@@ -18,16 +16,13 @@ module.exports = {
           ? res.status(404).json({ message: 'No user found with that ID' })
           : res.json(user)
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json({ error: 'Failed to get user', details: err.message }));
   },
-  // Create a new user
   createUser(req, res) {
-    console.log(req.body);
     User.create(req.body)
       .then((user) => res.json(user))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json({ error: 'Failed to create user', details: err.message }));
   },
-  // Update a user by ID
   updateUser(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
@@ -39,9 +34,8 @@ module.exports = {
           ? res.status(404).json({ message: 'No user found with that ID' })
           : res.json(user)
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json({ error: 'Failed to update user', details: err.message }));
   },
-  // Delete a user by ID
   deleteUser(req, res) {
     User.findOneAndDelete({ _id: req.params.userId })
       .then((user) =>
@@ -50,9 +44,8 @@ module.exports = {
           : Thought.deleteMany({ _id: { $in: user.thoughts } })
       )
       .then(() => res.json({ message: 'User and associated thoughts deleted!' }))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json({ error: 'Failed to delete user', details: err.message }));
   },
-  // Add a friend to a user's friend list
   addFriend(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
@@ -64,9 +57,8 @@ module.exports = {
           ? res.status(404).json({ message: 'No user found with that ID' })
           : res.json(user)
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json({ error: 'Failed to add friend', details: err.message }));
   },
-  // Remove a friend from a user's friend list
   removeFriend(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
@@ -78,6 +70,6 @@ module.exports = {
           ? res.status(404).json({ message: 'No user found with that ID' })
           : res.json(user)
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json({ error: 'Failed to remove friend', details: err.message }));
   },
 };
